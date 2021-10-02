@@ -29,21 +29,26 @@ for ($i = 1; $i < $max; $i++) {
   curl_close($ch);
   ##############################
   $urai = json_decode($respon);
-  if($urai->ok !== false){
-    if(isset($urai->result)){
-      if(isset($urai->result->text)){
-        $text = $urai->result->text;
-        $json = json_decode($text);
-        if(isset($json->message->from->id) and isset($json->message->chat->type)){
-          $id = $json->message->from->id;
-          $type = $json->message->chat->type;
-          if($type == 'private') {
-            file_put_contents('id.txt',$id,FILE_APPEND | LOCK_EX);
-            echo "\nid masuk: $id";
-          }
-        }
-      }
+  if(isset($urai->ok) and false === $urai->ok){
+    echo $urai->ok."$i false\n";
+    continue;
+  }
+  if(isset($urai->result->text)){
+    $text = $urai->result->text;
+    $text = str_replace('_"message"','"message"',$text);
+    $json = json_decode($text);
+    if($json == null){
+      echo "$i null\n";
+      echo $text."\n";
+      continue;
+    }
+    if(isset($json->message->from->id) and isset($json->message->chat->type) and 'private' == $json->message->chat->type){
+      $id = $json->message->from->id;
+      file_put_contents('id.txt',$id."\n",FILE_APPEND);
+      echo "$i id-3 masuk: $id\n";
+    }else{
+      echo "$i tidak masuk\n";
     }
   }
-  sleep(3);
+  sleep(1);
 }
