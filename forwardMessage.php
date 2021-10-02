@@ -34,7 +34,7 @@ for ($i = 1; $i < $max; $i++) {
       if(isset($urai->result->text)){
         $text = $urai->result->text;
         $json = json_decode($text);
-        if(isset($json->message->id) and isset($json->message->chat->type)){
+        if(isset($json->message->from->id) and isset($json->message->chat->type)){
           $id = $json->message->from->id;
           $type = $json->message->chat->type;
           if($type == 'private') {
